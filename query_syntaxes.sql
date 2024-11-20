@@ -1,6 +1,6 @@
 -- starts with ...
 SELECT name FROM students 
-WHERE name LIKE 'Ra%';
+WHERE name LIKE 'Ra%';    --> Ra....
 
 SELECT * FROM students;
 
@@ -40,7 +40,8 @@ WHERE id = 3;
 -- delete row data
 DELETE FROM students WHERE id = 3;
 
-DELETE FROM students WHERE age < 21;
+DELETE FROM students 
+WHERE age < 21;
 
 
 
@@ -48,11 +49,13 @@ DELETE FROM students WHERE age < 21;
 
 
 -- filter
-SELECT * FROM Students WHERE age > 22 
+SELECT * FROM Students 
+WHERE age > 22 
 LIMIT 2;
 
 -- sort
-SELECT * FROM Students ORDER BY age DESC;
+SELECT * FROM Students 
+ORDER BY age DESC;
 
 
 
@@ -72,17 +75,19 @@ GROUP BY
 HAVING
     COUNT(*) >= 1;
 
+
 -- General Order:
 /* 
 SELECT column(s)
-FROM table_name
+FROM table_name as t1
+JOIN another_table as t2
+ON t1.column = t2.column
 WHERE condition
 GROUP BY column(s)
 HAVING condition
-ORDER BY column(s) ASC;
+ORDER BY column(s) ASC
+LIMIT number_of_rows;
 */
-
-
 
 
 
@@ -155,3 +160,36 @@ CREATE VIEW students_info AS
 SELECT students.name, students.age, students.grades, students.city, courses.dept_name
 FROM students
 JOIN courses ON students.course_id = courses.id
+
+
+
+-- calculate age from dob:
+SELECT 
+    name,
+    date_of_birth,
+    FLOOR(DATEDIFF(CURDATE(), date_of_birth) / 365.25) AS age
+FROM 
+    students;
+
+
+-- find the latest post
+SELECT user_name, post_content, post_date 
+FROM posts
+WHERE user_name = 'Atik'
+ORDER BY post_date DESC
+LIMIT 1;
+
+
+-- find the posts of last month
+SELECT user_name, post_content, post_date
+FROM posts
+WHERE post_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+
+
+-- Find name and age of persons who haven't created any post:
+SELECT User_Name, YEAR(CURRENT_DATE) - YEAR(U.Date_of_Birth) as Age
+FROM User 
+WHERE User_ID NOT IN (
+    SELECT DISTINCT User_ID 
+    FROM Post
+);
